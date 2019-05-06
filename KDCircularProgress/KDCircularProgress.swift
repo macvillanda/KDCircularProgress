@@ -94,7 +94,7 @@ public class KDCircularProgress: UIView, CAAnimationDelegate {
         }
     }
     
-    @IBInspectable public var paddingPercentage: CGFloat = 20 {
+    @IBInspectable public var paddingPercentage: CGFloat = 0 {
         didSet {
             paddingPercentage = Utility.clamp(value: paddingPercentage, minMax: (0, 100))
             radius = (frame.size.width/2.0) * ((100 - paddingPercentage) / 100)
