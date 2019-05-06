@@ -108,6 +108,13 @@ public class KDCircularProgress: UIView, CAAnimationDelegate {
         }
     }
     
+    public var dashWidth: CGFloat = 0 {
+        didSet {
+            progressLayer.dashWidth = dashWidth
+            progressLayer.setNeedsDisplay()
+        }
+    }
+    
     @IBInspectable public var angle: Double = 0 {
         didSet {
             if self.isAnimating() {
@@ -387,6 +394,11 @@ public class KDCircularProgress: UIView, CAAnimationDelegate {
         }
         private var gradientCache: CGGradient?
         private var locationsCache: [CGFloat]?
+        var dashWidth: CGFloat = 0 {
+            didSet {
+                invalidateGradientCache()
+            }
+        }
         
         private enum GlowConstants {
             private static let sizeToGlowRatio: CGFloat = 0.00015
@@ -425,6 +437,7 @@ public class KDCircularProgress: UIView, CAAnimationDelegate {
             trackColor = progressLayer.trackColor
             colorsArray = progressLayer.colorsArray
             progressInsideFillColor = progressLayer.progressInsideFillColor
+            dashWidth = progressLayer.dashWidth
         }
         
         override init() {
@@ -459,6 +472,11 @@ public class KDCircularProgress: UIView, CAAnimationDelegate {
                 trackRadius = radius - trackLineWidth/2
             }
             
+            
+            let spaceWidth: CGFloat = dashWidth
+            let numSpaces: CGFloat = 4
+            let circumference: CGFloat = 2 * .pi * trackRadius
+            let dashLength = (circumference - (spaceWidth * numSpaces)) / numSpaces
             //let arcRadius = max(radius - trackLineWidth / 2, radius - progressLineWidth / 2)
             ctx.addArc(center: CGPoint(x: width / 2.0, y: height / 2.0), radius: trackRadius, startAngle: 0, endAngle: CGFloat.pi * 2, clockwise: false)
             trackColor.set()
@@ -466,6 +484,7 @@ public class KDCircularProgress: UIView, CAAnimationDelegate {
             ctx.setFillColor(progressInsideFillColor.cgColor)
             ctx.setLineWidth(trackLineWidth)
             ctx.setLineCap(CGLineCap.butt)
+            ctx.setLineDash(phase: 0, lengths: [dashLength, spaceWidth])
             ctx.drawPath(using: .fillStroke)
             
             UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
@@ -481,6 +500,8 @@ public class KDCircularProgress: UIView, CAAnimationDelegate {
             if glowValue > 0 {
                 imageCtx?.setShadow(offset: .zero, blur: glowValue, color: UIColor.black.cgColor)
             }
+            
+           
             
             let linecap: CGLineCap = roundedCorners ? .round : .butt
             imageCtx?.setLineCap(linecap)
