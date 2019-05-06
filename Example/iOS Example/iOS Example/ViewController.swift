@@ -26,6 +26,7 @@ class ViewController: UIViewController {
         progress.glowMode = .forward
         progress.glowAmount = 0.9
         progress.dashWidth = 5
+        progress.dashCount = 4
         progress.set(colors: UIColor.cyan ,UIColor.white, UIColor.magenta, UIColor.white, UIColor.orange)
         progress.center = CGPoint(x: view.center.x, y: view.center.y + 25)
         view.addSubview(progress)

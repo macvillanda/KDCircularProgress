@@ -115,6 +115,13 @@ public class KDCircularProgress: UIView, CAAnimationDelegate {
         }
     }
     
+    public var dashCount: Int = 0 {
+        didSet {
+            progressLayer.dashCount = dashCount
+            progressLayer.setNeedsDisplay()
+        }
+    }
+    
     @IBInspectable public var angle: Double = 0 {
         didSet {
             if self.isAnimating() {
@@ -400,6 +407,12 @@ public class KDCircularProgress: UIView, CAAnimationDelegate {
             }
         }
         
+        var dashCount: Int = 0 {
+            didSet {
+                invalidateGradientCache()
+            }
+        }
+        
         private enum GlowConstants {
             private static let sizeToGlowRatio: CGFloat = 0.00015
             static func glowAmount(forAngle angle: Double, glowAmount: CGFloat, glowMode: KDCircularProgressGlowMode, size: CGFloat) -> CGFloat {
@@ -474,7 +487,7 @@ public class KDCircularProgress: UIView, CAAnimationDelegate {
             
             
             let spaceWidth: CGFloat = dashWidth
-            let numSpaces: CGFloat = 4
+            let numSpaces: CGFloat = CGFloat(dashCount)
             let circumference: CGFloat = 2 * .pi * trackRadius
             let dashLength = (circumference - (spaceWidth * numSpaces)) / numSpaces
             //let arcRadius = max(radius - trackLineWidth / 2, radius - progressLineWidth / 2)
